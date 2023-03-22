@@ -4,3 +4,4 @@ Notable Finished Features include:<br>
 Web Scrapping completed through the application<br>
 Text that once tapped enables TTS of the story selected<br>
 UI Elements such as buttons that switch images once they are interacted with<br>
+![alt text](https://github.com/Joshober/AndroidReads/blob/main/Screenshot_20230321_212357.png)
