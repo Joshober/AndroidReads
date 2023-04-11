@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12dp"
+    android:height="12dp"
+    android:background = "@drawable/ic_circle"
+    android:viewportWidth="165"
+    android:viewportHeight="175.00781"
+    android:tint="#FFFFFF">
+  <group android:scaleX="0.8979191"
+      android:scaleY="0.95238096"
+      android:translateX="5.147864"
+      android:translateY="-9.722656">
+    <group android:translateY="144.77344">
+      <path android:pathData="M101,-0L85.078125,-0L49.84375,-42L28,-42L28,-0L14,-0L14,-105L43.484375,-105Q53.03125,-105,59.390625,-103.765625Q65.75,-102.546875,70.84375,-99.375Q76.5625,-95.796875,79.78125,-90.34375Q83,-84.90625,83,-76.546875Q83,-65.25,77.265625,-57.625Q71.53125,-50,61.46875,-46.140625L101,-0ZM69,-75.71875Q69,-80.15625,67.375,-83.59375Q65.765625,-87.03125,62.03125,-89.390625Q58.953125,-91.40625,54.703125,-92.203125Q50.46875,-93,44.734375,-93L28,-93L28,-54L42.359375,-54Q49.109375,-54,54.125,-55.140625Q59.15625,-56.296875,62.6875,-59.40625Q65.90625,-62.328125,67.453125,-66.109375Q69,-69.890625,69,-75.71875Z"
+          android:fillColor="#000000"
+          android:fillAlpha="0.8"/>
+      <path android:pathData="M161,-109L110.875,21L98,21L147.89062,-109L161,-109Z"
+          android:fillColor="#000000"
+          android:fillAlpha="0.8"/>
+    </group>
+  </group>
+</vector>

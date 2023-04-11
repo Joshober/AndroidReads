@@ -169,7 +169,13 @@ handler.post(() -> {
                                 });
                                 final TextView storyButton = CreateText(story.getTitle(),16);
                                 storyButton.setSingleLine(false);
-                                storyButton.setOnClickListener(v -> playTTS(story.getStory()));
+                                storyButton.setOnClickListener(v -> {
+                                    try {
+                                        speak(story.getStory());
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
                                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.WRAP_CONTENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -308,45 +314,45 @@ handler.post(() -> {
         }
         super.onPause();
     }
-    private void playTTS(String text) {
-        // Stop any previous playback
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-        }
-
-        // Initialize a new MediaPlayer instance
-        mediaPlayer = new MediaPlayer();
-
-        // Set the audio stream type
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        // Set a completion listener to release the MediaPlayer instance when playback is finished
-        mediaPlayer.setOnCompletionListener(mp -> {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        });
-
-        // Use the TTS to generate an audio file and load it to the MediaPlayer instance
-        try {
-            // Use the default language for the TTS output
-            int result = tts.setLanguage(Locale.getDefault());
-            if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
-                // Generate the audio file from the TTS output
-                String utteranceId = "tts_utterance_" + System.currentTimeMillis();
-                tts.synthesizeToFile(text, null, new File(getCacheDir(), utteranceId + ".wav"), utteranceId);
-
-                // Load the audio file to the MediaPlayer instance
-                mediaPlayer.setDataSource(new File(getCacheDir(), utteranceId + ".wav").getPath());
-                mediaPlayer.prepare();
-
-                // Start playback
-                mediaPlayer.start();
-            }
-        } catch (IOException e) {
-            Log.e("Stories", "Failed to play TTS", e);
-        }
-    }
+//    private void playTTS(String text) {
+//        // Stop any previous playback
+//        if (mediaPlayer != null) {
+//            mediaPlayer.stop();
+//            mediaPlayer.release();
+//        }
+//
+//        // Initialize a new MediaPlayer instance
+//        mediaPlayer = new MediaPlayer();
+//
+//        // Set the audio stream type
+//        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//
+//        // Set a completion listener to release the MediaPlayer instance when playback is finished
+//        mediaPlayer.setOnCompletionListener(mp -> {
+//            mediaPlayer.release();
+//            mediaPlayer = null;
+//        });
+//
+//        // Use the TTS to generate an audio file and load it to the MediaPlayer instance
+//        try {
+//            // Use the default language for the TTS output
+//            int result = tts.setLanguage(Locale.getDefault());
+//            if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+//                // Generate the audio file from the TTS output
+//                String utteranceId = "tts_utterance_" + System.currentTimeMillis();
+//                tts.synthesizeToFile(text, null, new File(getCacheDir(), utteranceId + ".wav"), utteranceId);
+//
+//                // Load the audio file to the MediaPlayer instance
+//                mediaPlayer.setDataSource(new File(getCacheDir(), utteranceId + ".wav").getPath());
+//                mediaPlayer.prepare();
+//
+//                // Start playback
+//                mediaPlayer.start();
+//            }
+//        } catch (IOException e) {
+//            Log.e("Stories", "Failed to play TTS", e);
+//        }
+//    }
     @Override
     public void onInit(int status) {
         if(status == TextToSpeech.SUCCESS) {
