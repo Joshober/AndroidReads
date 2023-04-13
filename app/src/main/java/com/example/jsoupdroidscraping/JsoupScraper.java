@@ -1,7 +1,5 @@
 package com.example.jsoupdroidscraping;
 
-import androidx.annotation.NonNull;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -33,20 +31,21 @@ public class JsoupScraper {
             StoryText.add(" ");
             for (Element a : div) {
                 //Iterate elements and print link attributes.
-                if (a.text().length() > 100) {
+
                     if ((!a.text().startsWith("Send") && !a.text().endsWith("Inc.") && (!a.text().endsWith("Network.")))) {
                         if (a.text().endsWith("!") || a.text().endsWith("?") || a.text().endsWith(".") || a.text().endsWith("\"")) {
                             if (!Objects.equals(StoryText.get(StoryText.size() - 1), a.text())) {
                                 if(StoryText.size()<10) {
-                                    story.setStory(story.getStory()+a);
-
+                                    if(a.text() != "null" ) {
+                                        story.setStory(story.getStory() + a.text());
+                                    }
                                 }
                             }
                         }
 
 
                     }
-                }
+
 
             }
             String listString = String.join(" ", StoryText);

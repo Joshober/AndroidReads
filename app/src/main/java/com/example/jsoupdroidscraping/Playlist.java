@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -231,25 +229,21 @@ public class Playlist extends AppCompatActivity implements TextToSpeech.OnInitLi
     }
 
 
-
     private void speak(String story) throws IOException {
-        // Initialize MediaPlayer
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        // Set a listener to release the MediaPlayer resources when playback is completed
-        mediaPlayer.setOnCompletionListener(mp -> {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        });
+        if (tts != null) {
+            tts.speak("test", TextToSpeech.QUEUE_FLUSH, null, null);
 
-        // Set the data source for MediaPlayer to read from a text-to-speech stream
-        mediaPlayer.setDataSource(story);
+            for (int i =4; i+100<story.length();i+=100){
+                tts.speak((story.substring(i,i+100)), TextToSpeech.QUEUE_ADD, null, null);
 
-        // Prepare and start MediaPlayer
-        mediaPlayer.prepare();
-        mediaPlayer.start();
+            }
+            tts.speak((story.substring((int)(story.length()/100)*100)), TextToSpeech.QUEUE_ADD, null, null);
+        } else {
+            Log.e("Playlist", "TextToSpeech engine not initialized");
+        }
     }
+
 
     @Override
     protected void onPause() {

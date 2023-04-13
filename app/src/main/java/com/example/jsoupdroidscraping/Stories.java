@@ -2,7 +2,6 @@ package com.example.jsoupdroidscraping;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,15 +18,9 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
@@ -35,12 +28,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 public class Stories extends AppCompatActivity implements TextToSpeech.OnInitListener {
     private TextToSpeech tts;
     private ArrayList<RedditStory> Urls;
-    private MediaPlayer mediaPlayer;
+    //private MediaPlayer mediaPlayer;
     private ArrayList<String> url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +95,6 @@ handler.post(() -> {
                             Stored dbHelper = Stored.getInstance(this);
 
                             RedditStory story = jsoupScraper.grabSources(s);
-                            System.out.println(story.getTitle()+"FAIL");
                             int[] playlistPhoto = {R.drawable.ic_action_added, R.drawable.ic_action_add};
                             int[] upArrowPhoto = {R.drawable.ic_action_up, R.drawable.ic_action_up_empty};
                             int[] DownArrowPhoto = {R.drawable.ic_action_down, R.drawable.ic_action_down_empty};
@@ -271,7 +262,6 @@ handler.post(() -> {
 
 
 
-    System.out.println("Done");
     }
 
 
@@ -301,11 +291,18 @@ handler.post(() -> {
     private void speak(String story) throws IOException {
 
         if (tts != null) {
-            tts.speak(story, TextToSpeech.QUEUE_FLUSH, null, null);
+            tts.speak("test", TextToSpeech.QUEUE_FLUSH, null, null);
+
+            for (int i =4; i+100<story.length();i+=100){
+                tts.speak((story.substring(i,i+100)), TextToSpeech.QUEUE_ADD, null, null);
+
+            }
+            tts.speak((story.substring((int)(story.length()/100)*100)), TextToSpeech.QUEUE_ADD, null, null);
         } else {
-            Log.e("Stories", "TextToSpeech engine not initialized");
+            Log.e("MainActivity", "TextToSpeech engine not initialized");
         }
     }
+
     @Override
     protected void onPause() {
         if (tts != null) {

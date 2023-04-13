@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:visibility="visible"
-        tools:visibility="visible"></LinearLayout>
+        tools:visibility="visible" />
 
     <ScrollView
         android:layout_width="0dp"
