@@ -194,6 +194,10 @@ public class Playlist extends AppCompatActivity implements TextToSpeech.OnInitLi
             startActivity(intent);
         });
         final ImageView Search = CreateImage(R.drawable.ic_action_find);
+        Search.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
         Playlist.setPadding(0,20,50,10);
         HomeButton.setPadding(150,20,200,10);
 
@@ -232,7 +236,7 @@ public class Playlist extends AppCompatActivity implements TextToSpeech.OnInitLi
     private void speak(String story) throws IOException {
 
         if (tts != null) {
-            tts.speak("test", TextToSpeech.QUEUE_FLUSH, null, null);
+            tts.speak(" ", TextToSpeech.QUEUE_FLUSH, null, null);
 
             for (int i =4; i+100<story.length();i+=100){
                 tts.speak((story.substring(i,i+100)), TextToSpeech.QUEUE_ADD, null, null);

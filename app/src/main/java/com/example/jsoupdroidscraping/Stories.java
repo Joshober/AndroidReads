@@ -2,7 +2,7 @@ package com.example.jsoupdroidscraping;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.MediaPlayer;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,9 +18,11 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
@@ -31,8 +33,7 @@ import java.util.concurrent.Future;
 
 public class Stories extends AppCompatActivity implements TextToSpeech.OnInitListener {
     private TextToSpeech tts;
-    private ArrayList<RedditStory> Urls;
-    //private MediaPlayer mediaPlayer;
+
     private ArrayList<String> url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class Stories extends AppCompatActivity implements TextToSpeech.OnInitLis
         Handler handler2 = new Handler(Looper.getMainLooper());
         Handler handler = new Handler(Looper.getMainLooper());
         String finalSite = site;
-        String finalPhotoUrl = photoUrl;
+
 
         Callable<ArrayList<String>> newsCallable = () -> {
             NewsScraper n = new NewsScraper(finalSite);
@@ -83,152 +84,302 @@ handler.post(() -> {
 
 
     try {
+        if (finalSite.substring(0, 22).equals("https://www.reddit.com")){
+            Thread CreateItems = new Thread(() -> {
+                try {
+
+                    JsoupScraper jsoupScraper = new JsoupScraper();
+                    List<RedditStory> stories = jsoupScraper.extractProducts(finalSite);
+                    int[] playlistPhoto = {R.drawable.ic_action_added, R.drawable.ic_action_add};
+                    int[] upArrowPhoto = {R.drawable.ic_action_up, R.drawable.ic_action_up_empty};
+                    int[] DownArrowPhoto = {R.drawable.ic_action_down, R.drawable.ic_action_down_empty};
+
+                    for (RedditStory story : stories) {
+                        Stored dbHelper = Stored.getInstance(this);
+
+                        int[] ImageTracker = {0, 0, 0};
+                        final TextView votes = CreateText(story.getUpvote(),10);
+                        votes.setPadding(10,40,10,10);
+                        votes.setLayoutParams(new LinearLayout.LayoutParams(80, ViewGroup.LayoutParams.MATCH_PARENT));
+                        votes.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        final ImageView addTOPlaylist = CreateImage(R.drawable.ic_action_add);
+                        addTOPlaylist.setOnClickListener(v -> {
+                            if (ImageTracker[0] == 1) {
+                                addTOPlaylist.setImageResource(playlistPhoto[1]);
+                                ImageTracker[0] = 0;                               dbHelper.deleteData(story.getTitle(),2);
+                                dbHelper.deleteData(story.getTitle(),1);
+
+                            } else {
+                                addTOPlaylist.setImageResource(playlistPhoto[0]);
+                                ImageTracker[0] = 1;
+                                dbHelper.addData(story.getTitle(), story.getStory(),1);
+
+                            }
+
+// Insert data into the database
+
+                            //Add To playlist
+                        });
+
+                        final ImageView Redditsub = CreateImage(R.drawable.ic_reddit);
+
+                        Redditsub.setBackgroundColor(ContextCompat.getColor(Stories.this,R.color.redditorange));
+                        //Picasso.get().load(story.getImageurl()).into(Redditsub);
+
+                        final ImageView UpArrow = CreateImage(R.drawable.ic_action_up_empty);
+                        UpArrow.setOnClickListener(v -> {
+                            if (ImageTracker[1] == 0) {
+                                UpArrow.setImageResource(upArrowPhoto[1]);
+                                ImageTracker[1] = 1;
+                                dbHelper.addData(story.getTitle(), story.getStory(),2);
+
+                            } else {
+                                UpArrow.setImageResource(upArrowPhoto[0]);
+                                ImageTracker[1] = 0;
+                                dbHelper.deleteData(story.getTitle(),2);
+                            }
+
+                        });
+//                       final ImageView DownArrow = CreateImage(R.drawable.ic_action_down_empty);
+//                       DownArrow.setOnClickListener(v -> {
+//                           if (ImageTracker[2] == 1) {
+//                               DownArrow.setImageResource(DownArrowPhoto[1]);
+//                               ImageTracker[2] = 0;
+//                           } else {
+//                               DownArrow.setImageResource(DownArrowPhoto[0]);
+//                               ImageTracker[2] = 1;
+//                           }
+//                       });
+
+
+                        final TextView subName = CreateText(story.getSub(),10);
+
+                        final TextView comments = CreateText(story.getComment(),10);
+                        comments.setPadding(10,10,50,10);
+
+                        comments.setOnClickListener(v -> {
+                            try {
+                                speak(story.getStory());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                        final TextView storyButton = CreateText(story.getTitle(),16);
+                        storyButton.setSingleLine(false);
+                        storyButton.setOnClickListener(v -> {
+                            try {
+                                speak(story.getStory());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+
+                        layoutParams.setMargins(0, 0, 0, 0);
+
+                        LinearLayout horizontalLayout = new LinearLayout(Stories.this);
+                        horizontalLayout.setLayoutParams(layoutParams);
+                        horizontalLayout.setVisibility(View.VISIBLE);
+                        layoutParams.gravity = Gravity.START;
+
+                        LinearLayout commentLine = new LinearLayout(Stories.this);
+                        commentLine.setLayoutParams(layoutParams);
+                        commentLine.setVisibility(View.VISIBLE);
+                        commentLine.setPadding(10,0,10,60);
+                        layoutParams.gravity = Gravity.START;
+                        parentLayout.setWeightSum(3);
+                        storyButton.setLayoutParams(layoutParams);
+                        comments.setX(storyButton.getX());
+                        comments.setPadding(10,20,10,10);
+
+                        commentLine.setGravity(Gravity.CENTER);
+
+                        Space space = new Space(Stories.this);
+                        LinearLayout.LayoutParams test = new LinearLayout.LayoutParams(
+                                (180),
+                                LinearLayout.LayoutParams.MATCH_PARENT
+                        );
+                        space.setLayoutParams(test);
+
+
+                        handler2.post(() -> {
+                            Log.d("Created", String.valueOf(parentLayout.getParent()));
+                            horizontalLayout.addView(addTOPlaylist);
+                            horizontalLayout.addView(UpArrow);
+                            //horizontalLayout.addView(votes);
+                            //horizontalLayout.addView(DownArrow);
+                            horizontalLayout.addView(storyButton);
+                            commentLine.addView(space);
+                            commentLine.addView(Redditsub);
+                            commentLine.addView(subName);
+                            commentLine.addView(comments);
+
+                            //horizontalLayout.addView(comments);
+
+                        });
+
+                        handler.post(() -> {
+
+                            parentLayout.addView(horizontalLayout);
+                            parentLayout.addView(commentLine);
+                        });
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            });
+            CreateItems.start();
+}       else {
             ArrayList<String> urls = future.get(); // retrieve the result from the FutureTask
             // use the URLs here
-        JsoupScraper jsoupScraper = new JsoupScraper();
+            JsoupScraper jsoupScraper = new JsoupScraper();
 
-        for (String s : urls) {
+            for (String s : urls) {
+
                 // do something with each URL
+                Thread CreateItems = new Thread(() -> {
+                    try {
+                        Stored dbHelper = Stored.getInstance(this);
 
-                    Thread CreateItems = new Thread(() -> {
-                        try {
-                            Stored dbHelper = Stored.getInstance(this);
+                        RedditStory story = jsoupScraper.grabSources(s);
+                        int[] playlistPhoto = {R.drawable.ic_action_added, R.drawable.ic_action_add};
+                        int[] upArrowPhoto = {R.drawable.ic_action_up, R.drawable.ic_action_up_empty};
+                        int[] DownArrowPhoto = {R.drawable.ic_action_down, R.drawable.ic_action_down_empty};
 
-                            RedditStory story = jsoupScraper.grabSources(s);
-                            int[] playlistPhoto = {R.drawable.ic_action_added, R.drawable.ic_action_add};
-                            int[] upArrowPhoto = {R.drawable.ic_action_up, R.drawable.ic_action_up_empty};
-                            int[] DownArrowPhoto = {R.drawable.ic_action_down, R.drawable.ic_action_down_empty};
-
-                                int[] ImageTracker = {0, 0, 0};
-                                final TextView votes = CreateText(story.getUpvote(),10);
-                                votes.setPadding(10,40,10,10);
-                                votes.setLayoutParams(new LinearLayout.LayoutParams(80, ViewGroup.LayoutParams.MATCH_PARENT));
-                                votes.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                                final ImageView addTOPlaylist = CreateImage(R.drawable.ic_action_add);
-                                addTOPlaylist.setOnClickListener(v -> {
-                                    if (ImageTracker[0] == 1) {
-                                        addTOPlaylist.setImageResource(playlistPhoto[1]);
-                                        ImageTracker[0] = 0;
-                                        dbHelper.deleteData(story.getTitle(),1);
-
+                        int[] ImageTracker = {0, 0, 0};
+                        final TextView votes = CreateText(story.getUpvote(), 10);
+                        votes.setPadding(10, 40, 10, 10);
+                        votes.setLayoutParams(new LinearLayout.LayoutParams(80, ViewGroup.LayoutParams.MATCH_PARENT));
+                        votes.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        final ImageView addTOPlaylist = CreateImage(R.drawable.ic_action_add);
+                        addTOPlaylist.setOnClickListener(v -> {
+                            if (ImageTracker[0] == 1) {
+                                addTOPlaylist.setImageResource(playlistPhoto[1]);
+                                ImageTracker[0] = 0;
+                                dbHelper.deleteData(story.getTitle(), 1);
 
 
-                                    } else {
-                                        addTOPlaylist.setImageResource(playlistPhoto[0]);
-                                        ImageTracker[0] = 1;
-                                        dbHelper.addData(story.getTitle(), story.getStory(),1);
+                            } else {
+                                addTOPlaylist.setImageResource(playlistPhoto[0]);
+                                ImageTracker[0] = 1;
+                                dbHelper.addData(story.getTitle(), story.getStory(), 1);
 
-                                    }
-                                    //Add To playlist
-                                });
+                            }
+                            //Add To playlist
+                        });
 
-                                final ImageView Redditsub = CreateImage(R.drawable.ic_reddit);
+                        final ImageView Redditsub = CreateImage(R.drawable.ic_reddit);
 
-                            //Redditsub.setBackgroundColor(ContextCompat.getColor(Stories.this,R.color.redditorange));
-                                //Picasso.get().load(story.getImageurl()).into(Redditsub);
+                        //Redditsub.setBackgroundColor(ContextCompat.getColor(Stories.this,R.color.redditorange));
+                        //Picasso.get().load(story.getImageurl()).into(Redditsub);
 
-                            final ImageView UpArrow = CreateImage(R.drawable.ic_action_up_empty);
-                            UpArrow.setOnClickListener(v -> {
-                                if (ImageTracker[1] == 0) {
+                        final ImageView UpArrow = CreateImage(R.drawable.ic_action_up_empty);
+                        UpArrow.setOnClickListener(v -> {
+                            if (ImageTracker[1] == 0) {
 
-                                    UpArrow.setImageResource(upArrowPhoto[0]);
-                                    ImageTracker[1] = 1;
-                                    dbHelper.addData(story.getTitle(), story.getStory(),1);
+                                UpArrow.setImageResource(upArrowPhoto[0]);
+                                ImageTracker[1] = 1;
+                                dbHelper.addData(story.getTitle(), story.getStory(), 1);
 
-                                } else {
-                                    UpArrow.setImageResource(upArrowPhoto[1]);
-                                    ImageTracker[1] = 0;
-                                    dbHelper.deleteData(story.getTitle(),1);
-
-
-                                }
-                                });
+                            } else {
+                                UpArrow.setImageResource(upArrowPhoto[1]);
+                                ImageTracker[1] = 0;
+                                dbHelper.deleteData(story.getTitle(), 1);
 
 
-
-                                final TextView subName = CreateText(story.getSub(),10);
-
-                                final TextView comments = CreateText(story.getComment(),10);
-                                comments.setPadding(10,10,50,10);
-
-                                comments.setOnClickListener(v -> {
-                                    try {
-                                        speak(story.getStory());
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                });
-                                final TextView storyButton = CreateText(story.getTitle(),16);
-                                storyButton.setSingleLine(false);
-                                storyButton.setOnClickListener(v -> {
-                                    try {
-                                        speak(story.getStory());
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                });
-                                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                );
-
-                                layoutParams.setMargins(0, 0, 0, 0);
-
-                                LinearLayout horizontalLayout = new LinearLayout(Stories.this);
-                                horizontalLayout.setLayoutParams(layoutParams);
-                                horizontalLayout.setVisibility(View.VISIBLE);
-                                layoutParams.gravity = Gravity.START;
-
-                                LinearLayout commentLine = new LinearLayout(Stories.this);
-                                commentLine.setLayoutParams(layoutParams);
-                                commentLine.setVisibility(View.VISIBLE);
-                                commentLine.setPadding(10,0,10,60);
-                                layoutParams.gravity = Gravity.START;
-                                parentLayout.setWeightSum(3);
-                                storyButton.setLayoutParams(layoutParams);
-                                comments.setX(storyButton.getX());
-                                comments.setPadding(10,20,10,10);
-
-                                commentLine.setGravity(Gravity.CENTER);
-
-                                Space space = new Space(Stories.this);
-                                LinearLayout.LayoutParams test = new LinearLayout.LayoutParams(
-                                        (180),
-                                        LinearLayout.LayoutParams.MATCH_PARENT
-                                );
-                                space.setLayoutParams(test);
+                            }
+                        });
 
 
-                                handler2.post(() -> {
-                                    Log.d("Created", String.valueOf(parentLayout.getParent()));
-                                    horizontalLayout.addView(addTOPlaylist);
-                                    horizontalLayout.addView(UpArrow);
-                                    //horizontalLayout.addView(votes);
-                                    //horizontalLayout.addView(DownArrow);
-                                    horizontalLayout.addView(storyButton);
-                                    commentLine.addView(space);
-                                    //commentLine.addView(Reddit-sub);
-                                    //commentLine.addView(subName);
-                                    //commentLine.addView(comments);
+                        final TextView subName = CreateText(story.getSub(), 10);
 
-                                    //horizontalLayout.addView(comments);
+                        final TextView comments = CreateText(story.getComment(), 10);
+                        comments.setPadding(10, 10, 50, 10);
 
-                                });
+                        comments.setOnClickListener(v -> {
+                            try {
+                                speak(story.getStory());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                        final TextView storyButton = CreateText(story.getTitle(), 16);
+                        storyButton.setSingleLine(false);
+                        storyButton.setOnClickListener(v -> {
+                            try {
+                                speak(story.getStory());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
 
-                                handler3.post(() -> {
+                        layoutParams.setMargins(0, 0, 0, 0);
 
-                                    parentLayout.addView(horizontalLayout);
-                                    parentLayout.addView(commentLine);
-                                });
+                        LinearLayout horizontalLayout = new LinearLayout(Stories.this);
+                        horizontalLayout.setLayoutParams(layoutParams);
+                        horizontalLayout.setVisibility(View.VISIBLE);
+                        layoutParams.gravity = Gravity.START;
+
+                        LinearLayout commentLine = new LinearLayout(Stories.this);
+                        commentLine.setLayoutParams(layoutParams);
+                        commentLine.setVisibility(View.VISIBLE);
+                        commentLine.setPadding(10, 0, 10, 60);
+                        layoutParams.gravity = Gravity.START;
+                        parentLayout.setWeightSum(3);
+                        storyButton.setLayoutParams(layoutParams);
+                        comments.setX(storyButton.getX());
+                        comments.setPadding(10, 20, 10, 10);
+
+                        commentLine.setGravity(Gravity.CENTER);
+
+                        Space space = new Space(Stories.this);
+                        LinearLayout.LayoutParams test = new LinearLayout.LayoutParams(
+                                (180),
+                                LinearLayout.LayoutParams.MATCH_PARENT
+                        );
+                        space.setLayoutParams(test);
 
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        handler2.post(() -> {
+                            Log.d("Created", String.valueOf(parentLayout.getParent()));
+                            horizontalLayout.addView(addTOPlaylist);
+                            horizontalLayout.addView(UpArrow);
+                            //horizontalLayout.addView(votes);
+                            //horizontalLayout.addView(DownArrow);
+                            horizontalLayout.addView(storyButton);
+                            commentLine.addView(space);
+                            //commentLine.addView(Reddit-sub);
+                            //commentLine.addView(subName);
+                            //commentLine.addView(comments);
 
-                    });
-                    CreateItems.start();
-                }
+                            //horizontalLayout.addView(comments);
+
+                        });
+
+                        handler3.post(() -> {
+
+                            parentLayout.addView(horizontalLayout);
+                            parentLayout.addView(commentLine);
+                        });
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                });
+                CreateItems.start();
+            }
+        }
 
 
         } catch (InterruptedException | ExecutionException e) {
@@ -247,6 +398,10 @@ handler.post(() -> {
             startActivity(intent);
         });
         final ImageView Search = CreateImage(R.drawable.ic_action_find);
+        Search.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
         Playlist.setPadding(0,20,50,10);
         HomeButton.setPadding(150,20,200,10);
 

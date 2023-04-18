@@ -36,7 +36,7 @@ public class JsoupScraper {
                         if (a.text().endsWith("!") || a.text().endsWith("?") || a.text().endsWith(".") || a.text().endsWith("\"")) {
                             if (!Objects.equals(StoryText.get(StoryText.size() - 1), a.text())) {
                                 if(StoryText.size()<10) {
-                                    if(a.text() != "null" ) {
+                                    if(!a.text().equals("null")) {
                                         story.setStory(story.getStory() + a.text());
                                     }
                                 }

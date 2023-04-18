@@ -54,7 +54,7 @@ public class Home extends AppCompatActivity {
         SiteImageurls.add("https://media3.s-nbcnews.com/j/newscms/2018_21/2442281/og-nbcnews1200x630_c986de7e1bb6ad2281723b692aa61990.nbcnews-fp-1200-630.png");
         SiteImageurls.add("https://cdn.vox-cdn.com/thumbor/HZ56zrWLxaUkA-UeVqPT1XpbeDg=/0x0:2040x1360/1200x800/filters:focal(857x517:1183x843)/cdn.vox-cdn.com/uploads/chorus_image/image/72043024/vox_logo_4x3.0.jpg");
         SiteImageurls.add("https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Fox_News_Channel_logo.svg/1200px-Fox_News_Channel_logo.svg.png");
-        SiteImageurls.add("https://www.restartlife.com/wp-content/uploads/logo-npr-white-1.png");
+        SiteImageurls.add("https://yt3.googleusercontent.com/OOT0eq8LoW8V3PMURGYuk0kRSgRGP7EsuGZoODhHBcg1jCB1qkuIAxS-XGnjKX9Q6rf-WKTvkQ=s900-c-k-c0x00ffffff-no-rj");
         SiteImageurls.add("https://styles.redditmedia.com/t5_2xhvq/styles/communityIcon_8qil7zgp7oh81.png?width=256&v=enabled&s=a0d16b61a95d6ba1dab2245d3c8e06007807bdc2");
         SiteImageurls.add("https://b.thumbs.redditmedia.com/r2KnsEBWjR1NN250YcjxHJyb_7DSuBxP5juTjDgotBw.png");
         SiteImageurls.add("https://styles.redditmedia.com/t5_67rd85/styles/communityIcon_xtw5wmoikct81.png?width=256&v=enabled&s=986ed41d3836738116a2fa7e9965e4fe55370699");
@@ -62,14 +62,14 @@ public class Home extends AppCompatActivity {
         SiteImageurls.add("https://b.thumbs.redditmedia.com/c0DzkGpqaijNQvaLMqPAypqTv90jsrqGbqGRCppdC2E.png");
         SiteImageurls.add("https://styles.redditmedia.com/t5_2tqq8/styles/communityIcon_ac6lbwyqkzma1.png?width=256&v=enabled&s=a01f6efc0f3874f19c8d6ce71cb2c544d15c0f6d");
         SiteImageurls.add("https://styles.redditmedia.com/t5_2qh3l/styles/communityIcon_fmygcobc22z81.png?width=256&v=enabled&s=d02a244d581933b1ece73a637c104a6d7f1c4649");
-        String[] SiteList ={"https://www.washingtonpost.com/","https://www.nbcnews.com/","https://www.vox.com/","https://www.foxnews.com/","https://www.npr.org/","https://www.reddit.com/r/AmItheAsshole/","https://www.reddit.com/r/shortstories/","https://www.reddit.com/r/AmITheJerkCommentary/","https://www.reddit.com/r/NuclearRevenge/","https://www.reddit.com/r/ProRevenge/","https://www.reddit.com/r/HorrorStory/"};
+        String[] SiteList ={"https://www.washingtonpost.com/","https://www.nbcnews.com/","https://www.vox.com/","https://www.foxnews.com/","https://abcnews.go.com/","https://www.reddit.com/r/AmItheAsshole/","https://www.reddit.com/r/shortstories/","https://www.reddit.com/r/AmITheJerkCommentary/","https://www.reddit.com/r/NuclearRevenge/","https://www.reddit.com/r/ProRevenge/","https://www.reddit.com/r/HorrorStory/"};
 
         ArrayList<String> Sitenames = new ArrayList<>();
         Sitenames.add("Washington Post");
         Sitenames.add("NBC News");
         Sitenames.add("Vox");
         Sitenames.add("Fox News");
-        Sitenames.add("NPR");
+        Sitenames.add("ABC News");
         Sitenames.add("AITA");
         Sitenames.add("Short Stories");
         Sitenames.add("AmITheJerk?");
@@ -109,7 +109,7 @@ public class Home extends AppCompatActivity {
                 Intent intent = new Intent(this, Stories.class);
                 intent.putExtra("key", SiteList[finalX+1]);
                 intent.putExtra("Image", SiteImageurls.get(finalX+1));
-
+                System.out.println(SiteList[finalX+1]);
                 startActivity(intent);
             });
             int finalX1 = x;
@@ -118,6 +118,8 @@ public class Home extends AppCompatActivity {
                 intent.putExtra("key", SiteList[finalX1]);
                 intent.putExtra("Image", SiteImageurls.get(finalX1));
                 startActivity(intent);
+                System.out.println(SiteList[finalX1]);
+
             });
             space.setLayoutParams(test);
             space2.setLayoutParams(test);
