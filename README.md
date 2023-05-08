@@ -14,4 +14,4 @@ Once the application has the stories it provides two buttons that allow the user
 [AppScreens (2).webm](https://user-images.githubusercontent.com/110935796/236846366-4d0b3166-4807-496f-b4fb-0757cc9fb75b.webm)
 # App Demo
 https://github.com/Joshober/AndroidReads/blob/6a2b624d74c8bacd3ad7c61e897631fb56d66bb5/Demo.webm  
-Due to githubs limmited file size the app demo requires you to download the video 
+Due to GitHub's limited file size, the app demo requires you to download the video 
