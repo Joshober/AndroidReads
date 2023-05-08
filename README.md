@@ -6,7 +6,7 @@ Once the application has the stories it provides two buttons that allow the user
 ## Improvements:
  Using a Database to preload all the stories- By creating a database that collect and stores all the current stories we can remove much of the lag created from the application having to visit multiple sites to collect their stories. The app would simply need to acess the online database to collect all the current stories.
 
-
+# Page Preview:
 [AppScreens (2).webm](https://user-images.githubusercontent.com/110935796/236846366-4d0b3166-4807-496f-b4fb-0757cc9fb75b.webm)
 # App Demo
 https://github.com/Joshober/AndroidReads/blob/Main/App%20Demo.mp4
